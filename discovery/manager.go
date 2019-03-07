@@ -35,6 +35,7 @@ import (
 	"github.com/prometheus/prometheus/discovery/gce"
 	"github.com/prometheus/prometheus/discovery/kubernetes"
 	"github.com/prometheus/prometheus/discovery/marathon"
+	"github.com/prometheus/prometheus/discovery/nacos"
 	"github.com/prometheus/prometheus/discovery/openstack"
 	"github.com/prometheus/prometheus/discovery/triton"
 	"github.com/prometheus/prometheus/discovery/zookeeper"
@@ -404,6 +405,11 @@ func (m *Manager) registerProviders(cfg sd_config.ServiceDiscoveryConfig, setNam
 	for _, c := range cfg.TritonSDConfigs {
 		add(c, func() (Discoverer, error) {
 			return triton.New(log.With(m.logger, "discovery", "triton"), c)
+		})
+	}
+	for _, c := range cfg.NacosSDConfigs {
+		add(c, func() (Discoverer, error) {
+			return nacos.NewDiscovery(c, log.With(m.logger, "discovery", "nacos"))
 		})
 	}
 	if len(cfg.StaticConfigs) > 0 {

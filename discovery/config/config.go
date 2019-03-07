@@ -24,6 +24,7 @@ import (
 	"github.com/prometheus/prometheus/discovery/gce"
 	"github.com/prometheus/prometheus/discovery/kubernetes"
 	"github.com/prometheus/prometheus/discovery/marathon"
+	"github.com/prometheus/prometheus/discovery/nacos"
 	"github.com/prometheus/prometheus/discovery/openstack"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/prometheus/prometheus/discovery/triton"
@@ -58,6 +59,8 @@ type ServiceDiscoveryConfig struct {
 	AzureSDConfigs []*azure.SDConfig `yaml:"azure_sd_configs,omitempty"`
 	// List of Triton service discovery configurations.
 	TritonSDConfigs []*triton.SDConfig `yaml:"triton_sd_configs,omitempty"`
+	// List of Nacos service discovery configurations.
+	NacosSDConfigs []*nacos.SDConfig `yaml:"nacos_sd_configs,omitempty"`
 }
 
 // Validate validates the ServiceDiscoveryConfig.
@@ -120,6 +123,11 @@ func (c *ServiceDiscoveryConfig) Validate() error {
 	for _, cfg := range c.StaticConfigs {
 		if cfg == nil {
 			return fmt.Errorf("empty or null section in static_configs")
+		}
+	}
+	for _, cfg := range c.NacosSDConfigs {
+		if cfg == nil {
+			return fmt.Errorf("empty or null section in nacos_sd_configs")
 		}
 	}
 	return nil
