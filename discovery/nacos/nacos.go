@@ -321,7 +321,7 @@ func (d *Discovery) shouldWatchFromMeta(userMeta string, meta map[string]string)
 	}
 	metas := strings.Split(userMeta, "=")
 	if len(metas) != 2 {
-		level.Error(d.logger).Log("msg", "invalid format of watchedServiceMeta", "value", userMeta)
+		level.Error(d.logger).Log("msg", "invalid format of meta", "value", userMeta)
 		return true
 	}
 	key := metas[0]
