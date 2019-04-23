@@ -416,6 +416,11 @@ func main() {
 			// Get all rule files matching the configuration paths.
 			var files []string
 			for _, pat := range cfg.RuleFiles {
+				// 如果是网络协议，则认为使用ES存储规则
+				if len(pat) > 4 && strings.EqualFold("http", pat[0:4]) {
+					files = append(files, pat)
+					continue
+				}
 				fs, err := filepath.Glob(pat)
 				if err != nil {
 					// The only error can be a bad pattern.

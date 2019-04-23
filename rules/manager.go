@@ -17,6 +17,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/prometheus/prometheus/util/es"
 	"math"
 	"net/url"
 	"sort"
@@ -27,7 +28,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/prometheus/common/model"
@@ -748,7 +749,10 @@ func (m *Manager) Update(interval time.Duration, files []string) error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
 
-	groups, errs := m.LoadGroups(interval, files...)
+	// 从ES加载配置
+	groups, errs := m.LoadESGroups(interval, files...)
+	// 从文件加载配置
+	//groups, errs := m.LoadGroups(interval, files...)
 	if errs != nil {
 		for _, e := range errs {
 			level.Error(m.logger).Log("msg", "loading groups failed", "err", e)
@@ -843,6 +847,61 @@ func (m *Manager) LoadGroups(interval time.Duration, filenames ...string) (map[s
 		}
 	}
 
+	return groups, nil
+}
+
+// LoadGroups reads groups from a elasticSearch server.
+func (m *Manager) LoadESGroups(interval time.Duration, filenames ...string) (map[string]*Group, []error) {
+	groups := make(map[string]*Group)
+
+	shouldRestore := !m.restored
+
+	// 只读取第一个ES配置信息
+	if len(filenames) == 0 {
+		return nil, []error{errors.New("no elasticSearch url exists")}
+	}
+	url := filenames[0]
+	fn := "elasticSearch"
+	client := es.NewESClient(url)
+	rules := client.ListRules()
+	for _, rule := range rules {
+		itv := interval
+		d, err := time.ParseDuration(rule.Interval)
+		if err == nil {
+			itv = d
+		}
+		rules := make([]Rule, 0, len(rule.Rules))
+		for _, r := range rule.Rules {
+			expr, err := promql.ParseExpr(r.Query)
+			if err != nil {
+				return groups, []error{err}
+			}
+
+			// 这里处理AlertingRule
+			if r.IsAlert() {
+				d, _ = time.ParseDuration(r.Duration)
+				rules = append(rules, NewAlertingRule(
+					r.Name,
+					expr,
+					d,
+					r.GetLabels(),
+					r.GetAnnotations(),
+					m.restored,
+					log.With(m.logger, "alert", r.Name),
+				))
+				continue
+			}
+			// 这里处理RecordRule
+			rules = append(rules, NewRecordingRule(
+				r.Name,
+				expr,
+				r.GetLabels(),
+			))
+		}
+
+		groups[groupKey(rule.Name, fn)] = NewGroup(rule.Name, fn, itv, rules, shouldRestore, m.opts)
+
+	}
 	return groups, nil
 }
 

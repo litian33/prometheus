@@ -65,6 +65,7 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.0.0 // indirect
 	github.com/lightstep/lightstep-tracer-go v0.15.6 // indirect
+	github.com/mailru/easyjson v0.0.0-20190403194419-1ea4449da983 // indirect
 	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/miekg/dns v1.0.4
 	github.com/mitchellh/go-homedir v0.0.0-20180523094522-3864e76763d9 // indirect
@@ -76,12 +77,14 @@ require (
 	github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223
 	github.com/oklog/oklog v0.0.0-20170918173356-f857583a70c3
 	github.com/olekukonko/tablewriter v0.0.0-20180912035003-be2c049b30cc // indirect
+	github.com/olivere/elastic v6.2.17+incompatible
 	github.com/onsi/ginkgo v1.6.0 // indirect
 	github.com/onsi/gomega v1.4.1 // indirect
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20170113013457-1de4cc2120e7
 	github.com/opentracing/basictracer-go v1.0.0 // indirect
 	github.com/opentracing/opentracing-go v1.0.1
 	github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c // indirect
+	github.com/peggypig/nacos-go v0.0.0-20190401050939-2a8e7d04f4d5
 	github.com/peterbourgon/diskv v0.0.0-20180312054125-0646ccaebea1 // indirect
 	github.com/peterbourgon/g2s v0.0.0-20170223122336-d4e7ad98afea // indirect
 	github.com/petermattis/goid v0.0.0-20170504144140-0ded85884ba5 // indirect
@@ -103,7 +106,7 @@ require (
 	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/smartystreets/goconvey v0.0.0-20180222194500-ef6db91d284a // indirect
 	github.com/spf13/pflag v1.0.3 // indirect
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.3.0
 	golang.org/x/crypto v0.0.0-20180621125126-a49355c7e3f8 // indirect
 	golang.org/x/net v0.0.0-20180826012351-8a410e7b638d
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be

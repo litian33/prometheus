@@ -149,6 +149,11 @@ func resolveFilepaths(baseDir string, cfg *Config) {
 	}
 
 	for i, rf := range cfg.RuleFiles {
+		// 如果是网络协议，则认为使用ES存储规则
+		if len(rf) > 4 && strings.EqualFold("http", rf[0:4]) {
+			cfg.RuleFiles[i] = rf
+			continue
+		}
 		cfg.RuleFiles[i] = join(rf)
 	}
 
